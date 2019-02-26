@@ -3,6 +3,8 @@ package lamar.database.nutrient;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.javatuples.Pair;
+
 public class ProviderFactory {
 
   private double[] table = new double[Nutrient.values().length];
@@ -100,6 +102,16 @@ public class ProviderFactory {
     return this;
   }
 
+  public ProviderFactory setNutrient(Nutrient n, double val) {
+    table[n.index] = val;
+    return this;
+  }
+
+  public ProviderFactory setConstituent(HashMap<NutrientProvider, Double> constituent) {
+   this.constituent = constituent; 
+   return this;
+  }
+
   public NutrientProvider build() {
     HashMap<String, Double> transform = new HashMap<>(constituent.size());
     for(NutrientProvider k : constituent.keySet()) {
@@ -112,6 +124,30 @@ public class ProviderFactory {
     }
 
     return new NutrientProvider(name, transform, unit, perUnit, type, table);
+  }
+
+
+  public String label() {
+    String tString = type == null ? "null" : type.toString();
+    String label = name + " " + tString + "\n";
+    String header = "Nutrient, unit, value " + getMeasure() + "\n";
+    StringBuilder str = new StringBuilder();
+    String delim = ", ";
+
+    for(Nutrient n : Nutrient.values()) {
+      str.append(n) 
+          .append(delim) 
+          .append(n.unit)
+          .append(delim)
+          .append(table[n.index])
+          .append("\n");
+    }
+
+    return label + header + str.toString();
+  }
+
+  public Pair<String, Integer> getMeasure() {
+    return new Pair<>(unit, perUnit);
   }
 
 }

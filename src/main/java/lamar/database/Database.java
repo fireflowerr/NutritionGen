@@ -70,6 +70,14 @@ public class Database implements AutoCloseable {
     return rs.isClosed() ? false : true;
   }
 
+  public boolean contains(Catagory type, String name) throws SQLException {
+    String exists = "SELECT DISTINCT type, name FROM main  WHERE type = " + 
+         type.p + " AND name = '" + name + "';";
+
+    ResultSet rs = stmt.executeQuery(exists);
+    return rs.isClosed() ? false : true;
+  }
+
   public NutrientProvider get(Catagory type, String name) throws SQLException, JsonMappingException, JsonProcessingException, IOException {
     String exists = "SELECT type, name, value FROM main  WHERE type = " + 
         type.p + " AND name = '" + name + "';";
