@@ -1,0 +1,8 @@
+# Ignore workspace folder
+workspace/
+
+# Ignore settings
+.settings/
+
+.project
+.classpath
