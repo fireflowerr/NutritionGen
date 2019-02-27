@@ -1,6 +1,7 @@
 lamar/app/App.class
-lamar/database/nutrient/Nutrient.class
 lamar/database/Database.class
 lamar/database/nutrient/Catagory.class
-lamar/database/nutrient/ProviderFactory.class
 lamar/database/nutrient/NutrientProvider.class
+lamar/database/nutrient/Nutrient.class
+lamar/database/Database$Column.class
+lamar/database/nutrient/ProviderFactory.class

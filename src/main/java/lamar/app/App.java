@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -38,16 +39,47 @@ public class App {
     try(Database db = Database.createIfAbsent(args[0])) {
       System.out.println("Database created or initialized at " + args[0]);
 
+      String[] options = { "add", "lookup" };
       boolean again = true;
       while(again) {
-        addEntry(db);
+
+        switch(getMenuSelect(options)) {
+          case 1: 
+            addEntry(db);
+            continue;
+          case 2: 
+            lookupEntry(db);
+            continue;
+          default: break;
+        }
+
         again = again("again");
       }
 
     } catch(Exception e) {
+      System.err.println(e.getMessage());
       e.printStackTrace();
     }
 
+  }
+
+  public static void lookupEntry(Database db) throws SQLException, IOException {
+    
+    boolean again = true;
+    String[] options = Arrays.stream(Catagory.values())
+        .map(x -> x.toString())
+        .toArray(String[]::new);
+    Catagory[] types = Catagory.values();
+    while(again) {
+
+      int selection = getMenuSelect(options);
+      if(selection >= 1) {
+        db.getType(types[selection - 1])
+            .forEach(x -> System.out.println(x.label()));
+      }
+
+      again = again("again");
+    }
   }
 
   public static void addEntry(Database db) throws IOException, SQLException {
@@ -69,32 +101,32 @@ public class App {
 
       System.out.println(fctry.label());
       int selection = getMenuSelect(baseAction);
-      if(selection < 1) {
-        return;
-      }
+      if(selection >= 1) {
 
-      switch(selection) {
-        case 1 :
-          fctry.setName(getStringIO("Enter provider name"));
-          break;
-        case 2 :
-          fctry.setUnit(getStringIO("Enter unit of measure"));
-          break;
-        case 3 :
-          fctry.setPerUnit(validateGetInt("Enter multiplicity of unit measure", 0, Integer.MAX_VALUE));
-          break;
-        case 4 : 
-          fctry.setType(getTypeIO("Select provider type"));
-          break;
-        case 5 : 
-          if(type.p == Catagory.INGREDIENT.p) {
-            fctry.setTable(getIngredientIO("Fill in ingredient table"));
-          } else {
-            fctry.setConstituent(getConstituentIO("Enter as: type, name", db));
-            fctry.buildCompositeTable();
-          }
-        default : 
-          break;
+        switch(selection) {
+          case 1 :
+            fctry.setName(getStringIO("Enter provider name"));
+            continue;
+          case 2 :
+            fctry.setUnit(getStringIO("Enter unit of measure"));
+            continue;
+          case 3 :
+            fctry.setPerUnit(validateGetInt("Enter multiplicity of unit measure", 0, Integer.MAX_VALUE));
+            continue;
+          case 4 : 
+            fctry.setType(getTypeIO("Select provider type"));
+            continue;
+          case 5 : 
+            if(type.p == Catagory.INGREDIENT.p) {
+              fctry.setTable(getIngredientIO("Fill in ingredient table"));
+            } else {
+              fctry.setConstituent(getConstituentIO("Enter as: type, name", db));
+              fctry.buildCompositeTable();
+            }
+            continue;
+          default : 
+            break;
+        }
       }
 
       again = again("again");
@@ -132,27 +164,31 @@ public class App {
     String instrct = "Enter value";
     while(again) {
 
-      switch(getMenuSelect(options)) {
-        case 1 : 
-          table[0] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
-          break; 
-        case 2 : 
-          table[1] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
-          break; 
-        case 3 : 
-          table[2] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
-          break; 
-        case 4 : 
-          table[3] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
-          break; 
-        case 5 : 
-          table[4] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
-          break; 
-        case 6 : 
-          table[5] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
-          break; 
-        default :
-          break;
+      int selection = getMenuSelect(options);
+      if(selection >= 1) {
+
+        switch(selection) {
+          case 1 : 
+            table[0] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
+            continue; 
+          case 2 : 
+            table[1] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
+            continue; 
+          case 3 : 
+            table[2] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
+            continue; 
+          case 4 : 
+            table[3] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
+            continue; 
+          case 5 : 
+            table[4] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
+            continue; 
+          case 6 : 
+            table[5] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
+            continue; 
+          default :
+            break;
+        }
       }
 
       again = again("again");
@@ -166,20 +202,32 @@ public class App {
     
     boolean again = true;   
     while(again) {
-      Catagory type = getTypeIO("Enter type for lookup query"); 
-      String name = getStringIO("Enter name for lookup query");
-      double multiplicty = validateGetDouble("Enter multiplicty", 0, Double.MAX_VALUE);
 
-      if(db.contains(type, name)) {
-       constituent.put(db.get(type, name), multiplicty);
+      Catagory type = getTypeIO("Select type for lookup query"); 
+      if(type != null) {
+        List<NutrientProvider> value = db.getType(type);
+        String[] options = value.stream()
+            .map(x -> x.getName())
+            .toArray(String[]::new);
+
+        int i = getMenuSelect(options) - 1;
+        if(i >= 0) {
+
+          NutrientProvider selection = value.get(i);
+          double multiplicty = validateGetDouble("Enter multiplicty", 0, Double.MAX_VALUE);
+          String name = selection.getName();
+
+          if(db.contains(type, name)) {
+           constituent.put(db.get(type, name), multiplicty);
+          }
+        }
       }
+
       again = again("again");
     }
 
     return constituent;
   }
-
-
 
   private static int getMenuSelect(String[] options) {
     IntStream.range(0, options.length)
@@ -202,8 +250,10 @@ public class App {
     }
 
     String errToken = in == 0 ? stdn.next() : Integer.toString(in);
-    System.out.println("input '" + errToken + "' is either invalid or out of range."); 
-    return again("again") ? validateGetInt(msg, start, end) : -1;
+    if(!errToken.equals("cancel")) {
+      System.out.println("input '" + errToken + "' is either invalid or out of range."); 
+    }
+    return -1;
   }
 
   private static double validateGetDouble(String msg, double start, double end) {
@@ -220,7 +270,7 @@ public class App {
 
     String errToken = in == 0 ? stdn.next() : Double.toString(in);
     System.out.println("input '" + errToken + "' is either invalid or out of range."); 
-    return again("again") ? validateGetDouble(msg, start, end) : -1;
+    return -1;
   }
 
   private static boolean again(String msg) {
@@ -246,8 +296,6 @@ public class App {
 
     System.out.println("Enter unit multiplicity");
     fctry.setPerUnit(Integer.valueOf(stdn.next()));
-
-    Nutrient[] n = Nutrient.values();
 
     return stdn.next();  
   }

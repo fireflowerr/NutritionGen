@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,6 +20,8 @@ import lamar.database.nutrient.NutrientProvider;
 
 
 public class Database implements AutoCloseable {
+
+  public static enum Column { TYPE, NAME };
 
   private static final String PREFACE = "jdbc:sqlite:";
  
@@ -71,7 +75,7 @@ public class Database implements AutoCloseable {
   }
 
   public boolean contains(Catagory type, String name) throws SQLException {
-    String exists = "SELECT DISTINCT type, name FROM main  WHERE type = " + 
+    String exists = "SELECT DISTINCT type, name FROM main WHERE type = " + 
          type.p + " AND name = '" + name + "';";
 
     ResultSet rs = stmt.executeQuery(exists);
@@ -79,7 +83,7 @@ public class Database implements AutoCloseable {
   }
 
   public NutrientProvider get(Catagory type, String name) throws SQLException, JsonMappingException, JsonProcessingException, IOException {
-    String exists = "SELECT type, name, value FROM main  WHERE type = " + 
+    String exists = "SELECT type, name, value FROM main WHERE type = " + 
         type.p + " AND name = '" + name + "';";
 
     ResultSet rs = stmt.executeQuery(exists);
@@ -91,6 +95,28 @@ public class Database implements AutoCloseable {
     NutrientProvider prov = (NutrientProvider)mapper.readValue((String)rs.getObject("value"), NutrientProvider.class);
     
     return prov;
+  }
+
+  public List<String> getColumn(String id) throws SQLException {
+    String get = "SELECT " + id + " FROM main";
+    ResultSet rs = stmt.executeQuery(get);
+    ArrayList<String> toRet = new ArrayList<>();
+
+    while(rs.next()) {
+      toRet.add(rs.getString(id));
+    }
+    return toRet;
+  }
+
+  public List<NutrientProvider> getType(Catagory type) throws SQLException, IOException {
+    String get = "SELECT value FROM main WHERE type = " + type.p;
+    ResultSet rs = stmt.executeQuery(get);
+    ArrayList<NutrientProvider> ntr = new ArrayList<>();
+     
+    while(rs.next()) {
+      ntr.add(mapper.readValue(rs.getString("value"), NutrientProvider.class));
+    }
+    return ntr;
   }
 
   @Override
