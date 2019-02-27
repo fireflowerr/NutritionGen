@@ -118,12 +118,20 @@ public class ProviderFactory {
       transform.put(k.getName(), constituent.get(k));
     }
 
-    if(name == null || unit == null) {
-      throw new IllegalStateException("NutrientProvider required fields name, " +
-          "unit FAILED null check");
+    if(name == null || unit == null || perUnit == 0 || type == null) {
+      throw new IllegalStateException("NutrientProvider required fields " +
+          "FAILED null check");
     }
 
     return new NutrientProvider(name, transform, unit, perUnit, type, table);
+  }
+
+  public boolean validate() {
+    if(name == null || unit == null || perUnit == 0 || type == null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
 

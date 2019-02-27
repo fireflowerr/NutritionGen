@@ -155,16 +155,16 @@ public class App {
         switch(selection) {
           case 1 :
             fctry.setName(getStringIO("Enter provider name"));
-            continue;
+            break;
           case 2 :
             fctry.setUnit(getStringIO("Enter unit of measure"));
-            continue;
+            break;
           case 3 :
             fctry.setPerUnit(validateGetInt("Enter multiplicity of unit measure", 0, Integer.MAX_VALUE));
-            continue;
+            break;
           case 4 : 
             fctry.setType(getTypeIO("Select provider type"));
-            continue;
+            break;
           case 5 : 
             if(type.p == Catagory.INGREDIENT.p) {
               fctry.setTable(getIngredientIO("Fill in ingredient table"));
@@ -172,16 +172,23 @@ public class App {
               fctry.setConstituent(getConstituentIO("Enter as: type, name", db));
               fctry.buildCompositeTable();
             }
-            continue;
-          default : 
             break;
+          default : 
+            again = false;
         }
+      } else {
+        again = false;
       }
 
-      again = again("again");
     }
     
-    db.add(fctry.build());
+    if(fctry.validate()) {
+      System.out.println("Entry added successfully");
+      db.add(fctry.build());
+    } else {
+      System.out.println("Entry NOT added successfully");
+    }
+    
   }
 
   private static String getStringIO(String msg) {
