@@ -7,10 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,11 +62,48 @@ public class Database implements AutoCloseable {
       stmt.execute(add);
   }
 
-  public void remove(NutrientProvider prov) throws SQLException {
-      String remove = "DELETE FROM main WHERE type = " + prov.getType().p + " AND name = '" + 
-          prov.getName() + "';";
+  public void remove(Catagory type, String name) throws SQLException, IOException {
+      for(NutrientProvider prov : getDependents(type, name)) {
+        remove(prov);
+      }
 
+      String remove = "DELETE FROM main WHERE type = " + type.p + " AND name = '" + 
+          name + "';";
       stmt.execute(remove);
+  }
+
+  public void remove(NutrientProvider prov) throws SQLException, IOException {
+    remove(prov.getType(), prov.getName());
+  }
+
+  private List<NutrientProvider> getDependents(Catagory type, String name) throws SQLException, IOException {
+    ArrayList<NutrientProvider> dependents = new ArrayList<>();
+    Catagory[] types = Catagory.values();
+    if(type == types[0]) {
+      return dependents;
+    }
+
+    int[] range = IntStream.range(type.p + 1 - 2, types.length).toArray();
+    for(int i : range) {
+      dependents.addAll(getType(types[i]));
+    }
+
+    return dependents.stream()
+        .filter(x -> isDependent(type, name, x))
+        .collect(Collectors.toList());
+  }
+
+  private boolean isDependent(Catagory type, String name, NutrientProvider prov) {
+    HashMap<String, Pair<Catagory, Double>> constituent = prov.getConstituent();
+
+    for(String ingr : constituent.keySet()) {
+      Catagory pType = constituent.get(ingr).getValue0();
+
+      if(pType == type && ingr.equals(name)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean contains(NutrientProvider prov) throws SQLException {

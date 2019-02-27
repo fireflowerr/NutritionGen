@@ -100,17 +100,34 @@ public class App {
 
       Catagory type = prov.getType();
 
-      if(type != Catagory.INGREDIENT && again("lookup ingredient values?")) {
+      options = type == Catagory.INGREDIENT ? 
+          new String[] { "remove" } :
+          new String[] { "remove", "lookup ingredient value" };
 
-        HashMap<String, Pair<Catagory, Double>> constituent = prov.getConstituent(); 
-        List<NutrientProvider> newList = new ArrayList<>(constituent.size());
-        
-        for(String ingr : constituent.keySet()) {
-          Pair<Catagory, Double> p = constituent.get(ingr);
-          newList.add(db.get(p.getValue0(), ingr));
-        }
-        expandProv(newList, db);
+      selection = getMenuSelect(options);
+      switch(selection) {
+        case 1: 
+          removeEntry(prov, db); 
+          break;
+        case 2: 
+          HashMap<String, Pair<Catagory, Double>> constituent = prov.getConstituent(); 
+          List<NutrientProvider> newList = new ArrayList<>(constituent.size());
+          
+          for(String ingr : constituent.keySet()) {
+            Pair<Catagory, Double> p = constituent.get(ingr);
+            newList.add(db.get(p.getValue0(), ingr));
+          }
+          expandProv(newList, db);
+          break;
       }
+    }
+  }
+
+  private static void removeEntry(NutrientProvider prov, Database db) throws SQLException, IOException {
+    String msg = "Warning: This operation will delete all entries which are dependent on this one."
+        + "\ncontinue";
+    if(again(msg)) {
+      db.remove(prov);
     }
   }
 
