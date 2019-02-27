@@ -2,6 +2,7 @@
 /home/azae/Dev/school/softwareEngineering/nutritionGen/src/main/java/lamar/app/App.java
 /home/azae/Dev/school/softwareEngineering/nutritionGen/src/main/java/lamar/database/nutrient/NutrientProvider.java
 /home/azae/Dev/school/softwareEngineering/nutritionGen/src/main/java/lamar/scraper/WebTableProvider.java
+/home/azae/Dev/school/softwareEngineering/nutritionGen/src/main/java/lamar/database/Pair.java
 /home/azae/Dev/school/softwareEngineering/nutritionGen/src/main/java/lamar/database/Database.java
 /home/azae/Dev/school/softwareEngineering/nutritionGen/src/main/java/lamar/scraper/TableProvider.java
 /home/azae/Dev/school/softwareEngineering/nutritionGen/src/main/java/lamar/scraper/LookupFactory.java

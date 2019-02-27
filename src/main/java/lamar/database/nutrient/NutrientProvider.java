@@ -1,8 +1,9 @@
 package lamar.database.nutrient;
 
-import org.javatuples.Pair;
 import java.util.HashMap;
+import lamar.database.Pair;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -23,10 +24,11 @@ public final class NutrientProvider {
   private final Catagory type;
 
   // name -> multiplicity
-  private final HashMap<String, Double> constituent;
+  private final HashMap<String, Pair<Catagory, Double>> constituent;
 
+  @JsonCreator
   public NutrientProvider(@JsonProperty("name") String name,
-        @JsonProperty("constituent") HashMap<String, Double> constituent, 
+        @JsonProperty("constituent") HashMap<String, Pair<Catagory, Double>> constituent, 
         @JsonProperty("unit") String unit, @JsonProperty("per") int per,
         @JsonProperty("type") Catagory type, @JsonProperty("table") double[] table) {
 
@@ -79,6 +81,18 @@ public final class NutrientProvider {
           .append("\n");
     }
 
+    if(!type.equals(Catagory.INGREDIENT)) {
+
+     str.append("INGREDIENTS\n");
+     for(String ingr : constituent.keySet()) {
+        double m = constituent.get(ingr).getValue1(); 
+              str.append(ingr)
+              .append(": ")
+              .append(m)
+              .append("\n");
+      }
+    }
+
     return label + header + str.toString();
   }
 
@@ -87,9 +101,9 @@ public final class NutrientProvider {
     return table[id.index];
   }
 
-  public HashMap<String, Double> getConstituent() {
+  public HashMap<String, Pair<Catagory, Double>> getConstituent() {
     @SuppressWarnings("unchecked")
-    HashMap<String, Double> toRet = (HashMap<String, Double>)constituent.clone();
+    HashMap<String, Pair<Catagory, Double>> toRet = (HashMap<String, Pair<Catagory, Double>>)constituent.clone();
     return toRet;
   }
 

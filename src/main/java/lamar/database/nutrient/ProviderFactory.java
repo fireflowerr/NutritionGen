@@ -3,7 +3,7 @@ package lamar.database.nutrient;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.javatuples.Pair;
+import lamar.database.Pair;
 
 public class ProviderFactory {
 
@@ -17,7 +17,7 @@ public class ProviderFactory {
 
   private Catagory type;
 
-  private HashMap<NutrientProvider, Double> constituent = new HashMap<>();
+  private HashMap<NutrientProvider, Pair<Catagory, Double>> constituent = new HashMap<>();
 
   public String getName() {
     return name;
@@ -60,7 +60,7 @@ public class ProviderFactory {
       throw new IllegalArgumentException("NutrientProvider hierarchy exception");
     }
 
-    constituent.put(n, multiplicity);
+    constituent.put(n, new Pair<>(type, multiplicity));
     return this;
   }
 
@@ -80,7 +80,7 @@ public class ProviderFactory {
     table = new double[Nutrient.values().length];
     int l = Nutrient.values().length;
     for(NutrientProvider k : constituent.keySet()) {
-      double multiplier = constituent.get(k); 
+      double multiplier = constituent.get(k).getValue1(); 
       Iterator<Double> itr = k.nutrTable().values().iterator();
 
       for(int i = 0; i < l; i++) {
@@ -107,13 +107,13 @@ public class ProviderFactory {
     return this;
   }
 
-  public ProviderFactory setConstituent(HashMap<NutrientProvider, Double> constituent) {
+  public ProviderFactory setConstituent(HashMap<NutrientProvider, Pair<Catagory, Double>> constituent) {
    this.constituent = constituent; 
    return this;
   }
 
   public NutrientProvider build() {
-    HashMap<String, Double> transform = new HashMap<>(constituent.size());
+    HashMap<String, Pair<Catagory, Double>> transform = new HashMap<>(constituent.size());
     for(NutrientProvider k : constituent.keySet()) {
       transform.put(k.getName(), constituent.get(k));
     }
@@ -148,6 +148,10 @@ public class ProviderFactory {
 
   public Pair<String, Integer> getMeasure() {
     return new Pair<>(unit, perUnit);
+  }
+
+  public HashMap<NutrientProvider, Pair<Catagory, Double>> getConstituent() {
+    return constituent;
   }
 
 }

@@ -2,6 +2,7 @@ package lamar.app;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Scanner;
 import java.util.stream.IntStream;
 
 import lamar.database.Database;
+import lamar.database.Pair;
 import lamar.database.nutrient.Catagory;
 import lamar.database.nutrient.Nutrient;
 import lamar.database.nutrient.NutrientProvider;
@@ -74,11 +76,41 @@ public class App {
 
       int selection = getMenuSelect(options);
       if(selection >= 1) {
-        db.getType(types[selection - 1])
-            .forEach(x -> System.out.println(x.label()));
-      }
+        List<NutrientProvider> entries = db.getType(types[selection - 1]);
+        
+        if(entries.isEmpty()) {
+          System.out.println("Empty");
+        } else
+          expandProv(entries, db);
+        }
 
-      again = again("again");
+        again = again("again");
+      }
+  }
+
+  private static void expandProv(List<NutrientProvider> list, Database db) throws SQLException, IOException {
+    String[] options = list.stream()
+        .map(x -> x.getName())
+        .toArray(String[]::new);
+
+    int selection = getMenuSelect(options);  
+    if(selection >= 1) {
+      NutrientProvider prov = list.get(selection - 1);
+      System.out.println(prov.label() + "\n");
+
+      Catagory type = prov.getType();
+
+      if(type != Catagory.INGREDIENT && again("lookup ingredient values?")) {
+
+        HashMap<String, Pair<Catagory, Double>> constituent = prov.getConstituent(); 
+        List<NutrientProvider> newList = new ArrayList<>(constituent.size());
+        
+        for(String ingr : constituent.keySet()) {
+          Pair<Catagory, Double> p = constituent.get(ingr);
+          newList.add(db.get(p.getValue0(), ingr));
+        }
+        expandProv(newList, db);
+      }
     }
   }
 
@@ -196,9 +228,11 @@ public class App {
     return table;
   }
 
-  public static HashMap<NutrientProvider, Double> getConstituentIO(String msg, Database db) throws SQLException, IOException {
+  public static HashMap<NutrientProvider, Pair<Catagory, Double>> 
+      getConstituentIO(String msg, Database db) throws SQLException, IOException {
+
     System.out.println(msg);
-    HashMap<NutrientProvider, Double> constituent = new HashMap<>();
+    HashMap<NutrientProvider, Pair<Catagory, Double>> constituent = new HashMap<>();
     
     boolean again = true;   
     while(again) {
@@ -218,7 +252,7 @@ public class App {
           String name = selection.getName();
 
           if(db.contains(type, name)) {
-           constituent.put(db.get(type, name), multiplicty);
+           constituent.put(db.get(type, name), new Pair<>(type, multiplicty));
           }
         }
       }
