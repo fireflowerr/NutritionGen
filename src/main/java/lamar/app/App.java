@@ -22,6 +22,8 @@ import lamar.database.nutrient.ProviderFactory;
  */
 public class App {
 
+  // Consumes the whole line on every token consumption. Makes getting numericals easier. Do not use
+  // nextLine.
   private static Scanner stdn;
   static {
     stdn = new Scanner(System.in);
