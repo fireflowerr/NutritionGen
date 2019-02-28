@@ -29,12 +29,9 @@ public class App {
   private static Scanner stdn;
   static {
     stdn = new Scanner(System.in);
-    String osName = System.getProperty("os.name").toLowerCase();
-    if(osName.startsWith("windows")) {
-      stdn.useDelimiter("\\r\\n");
-    } else {
-      stdn.useDelimiter("\\n");
-    }
+    String nl = System.getProperty("line.separator");
+    nl = nl.replaceAll("\\\\", "\\\\");
+    stdn.useDelimiter(nl);
   }
 
   /**
