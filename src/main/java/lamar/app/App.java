@@ -47,7 +47,9 @@ public class App {
       boolean again = true;
       while(again) {
 
-        switch(getMenuSelect(options)) {
+        switch(getMenuSelect(options, "exit")) {
+          case 0:
+            System.exit(0);
           case 1: 
             addEntry(db);
             continue;
@@ -67,7 +69,7 @@ public class App {
 
   }
 
-  public static void lookupEntry(Database db) throws SQLException, IOException {
+  private static void lookupEntry(Database db) throws SQLException, IOException {
     
     boolean again = true;
     String[] options = Arrays.stream(Catagory.values())
@@ -76,7 +78,7 @@ public class App {
     Catagory[] types = Catagory.values();
     while(again) {
 
-      int selection = getMenuSelect(options);
+      int selection = getMenuSelect(options, "back");
       if(selection >= 1) {
         List<NutrientProvider> entries = db.getType(types[selection - 1]);
         
@@ -84,9 +86,11 @@ public class App {
           System.out.println("Empty");
         } else
           expandProv(entries, db);
+        } else if(selection == 0) {
+          again = false;
+        } else {
+          again = again("again");
         }
-
-        again = again("again");
       }
   }
 
@@ -95,7 +99,7 @@ public class App {
         .map(x -> x.getName())
         .toArray(String[]::new);
 
-    int selection = getMenuSelect(options);  
+    int selection = getMenuSelect(options, "back");  
     if(selection >= 1) {
       NutrientProvider prov = list.get(selection - 1);
       System.out.println(prov.label() + "\n");
@@ -106,7 +110,7 @@ public class App {
           new String[] { "remove" } :
           new String[] { "remove", "lookup ingredient value" };
 
-      selection = getMenuSelect(options);
+      selection = getMenuSelect(options, "back");
       switch(selection) {
         case 1: 
           removeEntry(prov, db); 
@@ -133,7 +137,7 @@ public class App {
     }
   }
 
-  public static void addEntry(Database db) throws IOException, SQLException {
+  private static void addEntry(Database db) throws IOException, SQLException {
     ProviderFactory fctry = new ProviderFactory();
     boolean again = true;
 
@@ -151,10 +155,12 @@ public class App {
       }
 
       System.out.println(fctry.label());
-      int selection = getMenuSelect(baseAction);
-      if(selection >= 1) {
+      int selection = getMenuSelect(baseAction, "end");
+      if(selection >= 0) {
 
         switch(selection) {
+          case 0 :
+            return;
           case 1 :
             fctry.setName(getStringIO("Enter provider name"));
             break;
@@ -172,6 +178,9 @@ public class App {
               fctry.setTable(getIngredientIO("Fill in ingredient table"));
             } else {
               fctry.setConstituent(getConstituentIO("Enter as: type, name", db));
+              if(fctry.getConstituent().isEmpty()) {
+                break;
+              }
               fctry.buildCompositeTable();
             }
             break;
@@ -179,7 +188,7 @@ public class App {
             again = false;
         }
       } else {
-        again = false;
+        again = again("again");
       }
 
     }
@@ -205,8 +214,8 @@ public class App {
     String[] options =  Arrays.stream(types)
         .map(x -> x.toString())
         .toArray(String[]::new);
-    int v = getMenuSelect(options);
-    return v == -1 ? null : types[v - 1]; 
+    int v = getMenuSelect(options, "");
+    return v <= 0 ? null : types[v - 1]; 
   }
 
   private static double[] getIngredientIO(String msg) {
@@ -222,10 +231,12 @@ public class App {
     String instrct = "Enter value";
     while(again) {
 
-      int selection = getMenuSelect(options);
-      if(selection >= 1) {
+      int selection = getMenuSelect(options, "back");
+      if(selection >= 0) {
 
         switch(selection) {
+          case 0 :
+            return table;
           case 1 : 
             table[0] = validateGetDouble(instrct, 0, Double.MAX_VALUE);  
             continue; 
@@ -254,7 +265,7 @@ public class App {
     return table;
   }
 
-  public static HashMap<NutrientProvider, Pair<Catagory, Double>> 
+  private static HashMap<NutrientProvider, Pair<Catagory, Double>> 
       getConstituentIO(String msg, Database db) throws SQLException, IOException {
 
     System.out.println(msg);
@@ -270,7 +281,12 @@ public class App {
             .map(x -> x.getName())
             .toArray(String[]::new);
 
-        int i = getMenuSelect(options) - 1;
+        int i = getMenuSelect(options, "back");
+        if(i == 0) {
+          return constituent;
+        }
+
+        i--;
         if(i >= 0) {
 
           NutrientProvider selection = value.get(i);
@@ -289,11 +305,14 @@ public class App {
     return constituent;
   }
 
-  private static int getMenuSelect(String[] options) {
+  private static int getMenuSelect(String[] options, String escape) {
+    if(!escape.isEmpty()) {
+      System.out.println("0: " + escape);
+    }
     IntStream.range(0, options.length)
         .forEach(x -> System.out.println((x + 1) + ": " + options[x]));
 
-    int in = validateGetInt("", 1, options.length); 
+    int in = validateGetInt("", 0, options.length); 
     return in;
   }
 
@@ -336,28 +355,6 @@ public class App {
   private static boolean again(String msg) {
     System.out.println(msg + " y/n");
     return stdn.next().toLowerCase().matches("^y.*");
-  }
-
-  public static String getProv() {
-    ProviderFactory fctry = new ProviderFactory();
-    System.out.println("Enter NutrientProvider name");
-    fctry.setName(stdn.next());
-
-    Catagory vals[] = Catagory.values();
-    System.out.println("Enter NutrientProvider type");
-    IntStream.range(0, Catagory.values().length)
-        .mapToObj(x -> (1 + x) + vals[x].toString())
-        .forEach(System.out::println);
-    int selection = Integer.valueOf(stdn.next());
-    fctry.setType(vals[selection - 1]); 
-
-    System.out.println("Enter unit of measure");
-    fctry.setUnit(stdn.next());
-
-    System.out.println("Enter unit multiplicity");
-    fctry.setPerUnit(Integer.valueOf(stdn.next()));
-
-    return stdn.next();  
   }
 
 }
