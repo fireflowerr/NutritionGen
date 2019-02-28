@@ -30,4 +30,16 @@ public class Pair <T1, T2> {
   public String toString() {
     return "(" + value0 + ", " + value1 + ")";
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if(!(o.getClass() == Pair.class)) {
+      return false;
+    }
+
+    @SuppressWarnings("rawtypes")
+    Pair remote = (Pair)o;
+
+    return value0.equals(remote.getValue0()) && value1.equals(remote.getValue1()); 
+  }
 }

@@ -59,7 +59,7 @@ public class App {
           case 0:
             System.exit(0);
           case 1: 
-            addEntry(db);
+            addEntryUser(db);
             continue;
           case 2: 
             lookupEntry(db);
@@ -148,7 +148,13 @@ public class App {
   }
 
   private static void addEntry(Database db) throws IOException, SQLException {
-    ProviderFactory fctry = new ProviderFactory();
+  }
+
+  private static void addEntryUser(Database db) throws IOException, SQLException {
+    addEntryUser(db, new ProviderFactory());
+  }
+
+  private static void addEntryUser(Database db, ProviderFactory fctry) throws IOException, SQLException {
     boolean again = true;
 
     String[] baseAction = new String[] { "name", "unit", "per", "type" };

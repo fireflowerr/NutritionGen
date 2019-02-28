@@ -69,7 +69,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>lamar.app.App</mainClass>
+              <mainClass>lamar.scraper.ScraperTUI</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>

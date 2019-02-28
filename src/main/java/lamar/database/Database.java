@@ -40,7 +40,14 @@ public class Database implements AutoCloseable {
     this.stmt = stmt;
   }
 
-  public static Database getInstance(String dbLoc) throws SQLException {
+  /**
+ * @return the dbLoc
+ */
+public String getDbLoc() {
+	return dbLoc;
+}
+
+public static Database getInstance(String dbLoc) throws SQLException {
     Connection conn = DriverManager.getConnection(PREFACE + dbLoc);
     Statement stmt = conn.createStatement();
     return new Database(dbLoc, conn, stmt); 
@@ -76,7 +83,7 @@ public class Database implements AutoCloseable {
     remove(prov.getType(), prov.getName());
   }
 
-  private List<NutrientProvider> getDependents(Catagory type, String name) throws SQLException, IOException {
+  public List<NutrientProvider> getDependents(Catagory type, String name) throws SQLException, IOException {
     ArrayList<NutrientProvider> dependents = new ArrayList<>();
     Catagory[] types = Catagory.values();
     if(type == types[0]) {
@@ -93,7 +100,7 @@ public class Database implements AutoCloseable {
         .collect(Collectors.toList());
   }
 
-  private boolean isDependent(Catagory type, String name, NutrientProvider prov) {
+  public boolean isDependent(Catagory type, String name, NutrientProvider prov) {
     HashMap<String, Pair<Catagory, Double>> constituent = prov.getConstituent();
 
     for(String ingr : constituent.keySet()) {
