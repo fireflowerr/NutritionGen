@@ -22,12 +22,19 @@ import lamar.database.nutrient.ProviderFactory;
  */
 public class App {
 
+  private static final String DB_NAME = "nutritionGen.db";
+
   // Consumes the whole line on every token consumption. Makes getting numericals easier. Do not use
   // nextLine.
   private static Scanner stdn;
   static {
     stdn = new Scanner(System.in);
-    stdn.useDelimiter("\\n");
+    String osName = System.getProperty("os.name").toLowerCase();
+    if(osName.startsWith("windows")) {
+      stdn.useDelimiter("\\r\\n");
+    } else {
+      stdn.useDelimiter("\\n");
+    }
   }
 
   /**
@@ -40,7 +47,11 @@ public class App {
       System.exit(1);
     }
 
-    try(Database db = Database.createIfAbsent(args[0])) {
+    String dbLoc = args[0];
+    if(!dbLoc.matches("/$")) {
+      dbLoc += "/";
+    }
+    try(Database db = Database.createIfAbsent(dbLoc + DB_NAME)) {
       System.out.println("Database created or initialized at " + args[0]);
 
       String[] options = { "add", "lookup" };
@@ -59,12 +70,14 @@ public class App {
           default: break;
         }
 
-        again = again("again");
+        again = getResponse("again");
       }
 
     } catch(Exception e) {
       System.err.println(e.getMessage());
-      e.printStackTrace();
+      if(getResponse("show log")) {
+        e.printStackTrace();
+      }
     }
 
   }
@@ -89,7 +102,7 @@ public class App {
         } else if(selection == 0) {
           again = false;
         } else {
-          again = again("again");
+          again = getResponse("again");
         }
       }
   }
@@ -132,7 +145,7 @@ public class App {
   private static void removeEntry(NutrientProvider prov, Database db) throws SQLException, IOException {
     String msg = "Warning: This operation will delete all entries which are dependent on this one."
         + "\ncontinue";
-    if(again(msg)) {
+    if(getResponse(msg)) {
       db.remove(prov);
     }
   }
@@ -160,7 +173,8 @@ public class App {
 
         switch(selection) {
           case 0 :
-            return;
+            again = false;
+            break;
           case 1 :
             fctry.setName(getStringIO("Enter provider name"));
             break;
@@ -188,7 +202,7 @@ public class App {
             again = false;
         }
       } else {
-        again = again("again");
+        again = getResponse("again");
       }
 
     }
@@ -260,7 +274,7 @@ public class App {
         }
       }
 
-      again = again("again");
+      again = getResponse("again");
     }
     return table;
   }
@@ -299,7 +313,7 @@ public class App {
         }
       }
 
-      again = again("again");
+      again = getResponse("again");
     }
 
     return constituent;
@@ -352,7 +366,7 @@ public class App {
     return -1;
   }
 
-  private static boolean again(String msg) {
+  private static boolean getResponse(String msg) {
     System.out.println(msg + " y/n");
     return stdn.next().toLowerCase().matches("^y.*");
   }
