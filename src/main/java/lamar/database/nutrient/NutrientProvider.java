@@ -1,11 +1,14 @@
 package lamar.database.nutrient;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import lamar.database.Pair;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lamar.database.Pair;
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.ANY,
@@ -105,6 +108,19 @@ public final class NutrientProvider {
     @SuppressWarnings("unchecked")
     HashMap<String, Pair<Catagory, Double>> toRet = (HashMap<String, Pair<Catagory, Double>>)constituent.clone();
     return toRet;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o.getClass() != NutrientProvider.class) {
+      return false;
+    }
+
+    NutrientProvider remote = (NutrientProvider)o;
+
+    return name.equals(remote.name) && unit.equals(remote.unit) 
+        && Arrays.equals(table, remote.table) && per == remote.per
+        && type == remote.type && constituent.equals(remote.constituent);
   }
 
   // USED FOR JSON SERIALIZATION

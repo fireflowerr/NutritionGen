@@ -8,8 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -69,6 +71,12 @@ public static Database getInstance(String dbLoc) throws SQLException {
       stmt.execute(add);
   }
 
+  public void addAll(NutrientProvider... provs) throws SQLException, JsonProcessingException {
+    for(NutrientProvider ntr : provs) {
+      add(ntr);
+    }
+  }
+
   public void remove(Catagory type, String name) throws SQLException, IOException {
       for(NutrientProvider prov : getDependents(type, name)) {
         remove(prov);
@@ -83,21 +91,40 @@ public static Database getInstance(String dbLoc) throws SQLException {
     remove(prov.getType(), prov.getName());
   }
 
-  public List<NutrientProvider> getDependents(Catagory type, String name) throws SQLException, IOException {
-    ArrayList<NutrientProvider> dependents = new ArrayList<>();
+  public ValueSet<NutrientProvider> getDependents(Catagory type, String name) throws IOException, SQLException {
+    ValueSet<NutrientProvider> canidates = new ValueSet<>();
     Catagory[] types = Catagory.values();
-    if(type == types[0]) {
-      return dependents;
-    }
 
-    int[] range = IntStream.range(type.p + 1 - 2, types.length).toArray();
+    if(type.p == 0) { 
+      return canidates;
+    } 
+
+    int[] range = IntStream.range(0, type.p).toArray();
     for(int i : range) {
-      dependents.addAll(getType(types[i]));
+      canidates.addAll(getType(types[i]));
+    }
+   
+   return getDependents(type, name, new ValueSet<NutrientProvider>(), canidates); 
+  }
+
+  private ValueSet<NutrientProvider> getDependents(Catagory type, String name,
+      ValueSet<NutrientProvider> oldDependents, ValueSet<NutrientProvider> canidates) throws 
+      SQLException, IOException {
+
+    ValueSet<NutrientProvider> dependents = canidates.stream()
+        .filter(x -> isDependent(type, name, x))
+        .filter(x -> !oldDependents.contains(x))
+        .collect(Collectors.toCollection(ValueSet::new));
+    
+    if(dependents.isEmpty()) {
+      return oldDependents;
     }
 
-    return dependents.stream()
-        .filter(x -> isDependent(type, name, x))
-        .collect(Collectors.toList());
+    oldDependents.addAll(dependents);
+    for(NutrientProvider dep : dependents) {
+      getDependents(dep.getType(), dep.getName(), oldDependents, canidates);
+    }
+    return oldDependents;
   }
 
   public boolean isDependent(Catagory type, String name, NutrientProvider prov) {

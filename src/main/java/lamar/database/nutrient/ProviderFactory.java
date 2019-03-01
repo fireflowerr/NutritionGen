@@ -56,7 +56,8 @@ public class ProviderFactory {
   }
 
   public ProviderFactory addConstituent(NutrientProvider n, double multiplicity) {
-    if(n.getType().p < type.p) {
+    Catagory type = n.getType();
+    if(type.p < type.p) {
       throw new IllegalArgumentException("NutrientProvider hierarchy exception");
     }
 
