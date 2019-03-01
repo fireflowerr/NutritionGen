@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import lamar.database.Database;
@@ -15,6 +16,7 @@ import lamar.database.nutrient.Catagory;
 import lamar.database.nutrient.Nutrient;
 import lamar.database.nutrient.NutrientProvider;
 import lamar.database.nutrient.ProviderFactory;
+import lamar.scraper.UsdaScraper;
  
 /**
  *
@@ -23,6 +25,7 @@ import lamar.database.nutrient.ProviderFactory;
 public class App {
 
   private static final String DB_NAME = "nutritionGen.db";
+  private static final int MAX_SEARCH_SZ = 20;
 
   // Consumes the whole line on every token consumption. Makes getting numericals easier. Do not use
   // nextLine.
@@ -59,7 +62,7 @@ public class App {
           case 0:
             System.exit(0);
           case 1: 
-            addEntryUser(db);
+            addEntry(db);
             continue;
           case 2: 
             lookupEntry(db);
@@ -148,10 +151,52 @@ public class App {
   }
 
   private static void addEntry(Database db) throws IOException, SQLException {
+    String options[] = new String[] { "from web", "manually" };
+
+    int selection = getMenuSelect(options, "end");
+    ProviderFactory fctry = new ProviderFactory();
+    
+    if(selection >= 0) {
+      switch(selection) {
+        case 0: 
+          break;
+        case 1: 
+          addEntryWeb(db, fctry);
+          break;
+        case 2:
+          addEntryUser(db, fctry);
+          break;
+      }
+    }
+
+    if(fctry.validate()) {
+      System.out.println("Entry added successfully");
+      db.add(fctry.build());
+    } else {
+      System.out.println("Entry NOT added successfully");
+    }
   }
 
-  private static void addEntryUser(Database db) throws IOException, SQLException {
-    addEntryUser(db, new ProviderFactory());
+  private static void addEntryWeb(Database db, ProviderFactory fctry) throws IOException, SQLException {
+    String searchTerm = getStringIO("Enter a term for web search"); 
+    HashMap<Pair<String, String>, Integer> rslt = UsdaScraper.getSearchResults(searchTerm);    
+    List<Pair<String, String>> ks = rslt.keySet().stream()
+        .collect(Collectors.toList());
+
+    String[] options = ks.stream()
+        .limit(MAX_SEARCH_SZ)
+        .map(x -> x.toString())
+        .toArray(String[]::new);
+
+    int selection = getMenuSelect(options, "back");
+    if(selection <= 0) {
+      return;
+    }
+
+    int id = rslt.get(ks.get(selection - 1));
+    UsdaScraper.getIngredient(id, fctry);
+
+    addEntryUser(db, fctry);
   }
 
   private static void addEntryUser(Database db, ProviderFactory fctry) throws IOException, SQLException {
@@ -207,16 +252,7 @@ public class App {
       } else {
         again = getResponse("again");
       }
-
     }
-    
-    if(fctry.validate()) {
-      System.out.println("Entry added successfully");
-      db.add(fctry.build());
-    } else {
-      System.out.println("Entry NOT added successfully");
-    }
-    
   }
 
   private static String getStringIO(String msg) {

@@ -7,4 +7,3 @@ lamar/database/nutrient/Nutrient.class
 lamar/scraper/UsdaScraper.class
 lamar/database/Database$Column.class
 lamar/database/nutrient/ProviderFactory.class
-lamar/scraper/ScraperTUI.class

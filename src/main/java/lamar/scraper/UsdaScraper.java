@@ -38,9 +38,8 @@ public class UsdaScraper {
     return results;
   }
 
-  public static ProviderFactory getIngredient(int id) throws IOException { 
+  public static void getIngredient(int id, ProviderFactory fctry) throws IOException { 
     Document doc = Jsoup.connect(ENTRY_PREFACE + id).get();
-    ProviderFactory fctry = new ProviderFactory();
     fctry.setType(Catagory.INGREDIENT);
 
     Pair<String, Integer> measure = getUnitsPer(doc);
@@ -48,8 +47,6 @@ public class UsdaScraper {
         .setPerUnit(measure.getValue1());
       
     setTable(doc, fctry);
-
-    return fctry;
   }
 
   private static void setTable(Document doc, ProviderFactory fctry) throws IOException {
