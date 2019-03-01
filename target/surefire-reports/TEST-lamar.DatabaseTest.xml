@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="lamar.DatabaseTest" time="0.737" tests="4" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="lamar.DatabaseTest" time="0.665" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
     <property name="file.encoding.pkg" value="sun.io"/>
     <property name="java.specification.version" value="1.8"/>
     <property name="sun.cpu.isalist" value=""/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
-    <property name="java.class.path" value="/home/azae/Dev/school/softwareEngineering/nutritionGen/target/test-classes:/home/azae/Dev/school/softwareEngineering/nutritionGen/target/classes:/home/azae/.m2/repository/org/jsoup/jsoup/1.8.3/jsoup-1.8.3.jar:/home/azae/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/azae/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/azae/.m2/repository/org/xerial/sqlite-jdbc/3.25.2/sqlite-jdbc-3.25.2.jar:/home/azae/.m2/repository/org/javatuples/javatuples/1.2/javatuples-1.2.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.9.8/jackson-core-2.9.8.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.9.8/jackson-databind-2.9.8.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.9.8/jackson-annotations-2.9.8.jar:"/>
+    <property name="java.class.path" value="/home/azae/Dev/school/softwareEngineering/nutritionGen/target/test-classes:/home/azae/Dev/school/softwareEngineering/nutritionGen/target/classes:/home/azae/.m2/repository/org/jsoup/jsoup/1.8.3/jsoup-1.8.3.jar:/home/azae/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/azae/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/azae/.m2/repository/org/xerial/sqlite-jdbc/3.25.2/sqlite-jdbc-3.25.2.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.9.8/jackson-core-2.9.8.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.9.8/jackson-databind-2.9.8.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.9.8/jackson-annotations-2.9.8.jar:"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.vendor.url" value="http://java.oracle.com/"/>
@@ -16,8 +16,8 @@
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
-    <property name="sun.java.command" value="/home/azae/Dev/school/softwareEngineering/nutritionGen/target/surefire/surefirebooter5707854718926976365.jar /home/azae/Dev/school/softwareEngineering/nutritionGen/target/surefire 2019-03-01T03-07-15_299-jvmRun1 surefire2574413697987334064tmp surefire_02836638058050687185tmp"/>
-    <property name="surefire.test.class.path" value="/home/azae/Dev/school/softwareEngineering/nutritionGen/target/test-classes:/home/azae/Dev/school/softwareEngineering/nutritionGen/target/classes:/home/azae/.m2/repository/org/jsoup/jsoup/1.8.3/jsoup-1.8.3.jar:/home/azae/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/azae/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/azae/.m2/repository/org/xerial/sqlite-jdbc/3.25.2/sqlite-jdbc-3.25.2.jar:/home/azae/.m2/repository/org/javatuples/javatuples/1.2/javatuples-1.2.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.9.8/jackson-core-2.9.8.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.9.8/jackson-databind-2.9.8.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.9.8/jackson-annotations-2.9.8.jar:"/>
+    <property name="sun.java.command" value="/home/azae/Dev/school/softwareEngineering/nutritionGen/target/surefire/surefirebooter630916788226938286.jar /home/azae/Dev/school/softwareEngineering/nutritionGen/target/surefire 2019-03-01T14-16-38_079-jvmRun1 surefire526018993950974630tmp surefire_06533031941262709685tmp"/>
+    <property name="surefire.test.class.path" value="/home/azae/Dev/school/softwareEngineering/nutritionGen/target/test-classes:/home/azae/Dev/school/softwareEngineering/nutritionGen/target/classes:/home/azae/.m2/repository/org/jsoup/jsoup/1.8.3/jsoup-1.8.3.jar:/home/azae/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/azae/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/azae/.m2/repository/org/xerial/sqlite-jdbc/3.25.2/sqlite-jdbc-3.25.2.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.9.8/jackson-core-2.9.8.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.9.8/jackson-databind-2.9.8.jar:/home/azae/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.9.8/jackson-annotations-2.9.8.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/home/azae"/>
     <property name="user.language" value="en"/>
@@ -29,7 +29,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="/home/azae/Dev/school/softwareEngineering/nutritionGen/target/surefire/surefirebooter5707854718926976365.jar"/>
+    <property name="surefire.real.class.path" value="/home/azae/Dev/school/softwareEngineering/nutritionGen/target/surefire/surefirebooter630916788226938286.jar"/>
     <property name="sun.boot.class.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/resources.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jsse.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/charsets.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jfr.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/classes"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="1.8.0_191-8u191-b12-2ubuntu0.18.04.1-b12"/>
@@ -57,8 +57,8 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="52.0"/>
   </properties>
-  <testcase name="aCreateDB" classname="lamar.DatabaseTest" time="0.362"/>
-  <testcase name="bAddContains" classname="lamar.DatabaseTest" time="0.163"/>
-  <testcase name="cGetDependents" classname="lamar.DatabaseTest" time="0.132"/>
-  <testcase name="dRemove" classname="lamar.DatabaseTest" time="0.042"/>
+  <testcase name="aCreateDB" classname="lamar.DatabaseTest" time="0.32"/>
+  <testcase name="bAddContains" classname="lamar.DatabaseTest" time="0.149"/>
+  <testcase name="cRemove" classname="lamar.DatabaseTest" time="0.156"/>
+  <testcase name="get" classname="lamar.DatabaseTest" time="0.008"/>
 </testsuite>

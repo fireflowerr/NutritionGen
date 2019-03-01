@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import lamar.database.Database;
-import lamar.database.ValueSet;
 import lamar.database.nutrient.Catagory;
 import lamar.database.nutrient.Nutrient;
 import lamar.database.nutrient.NutrientProvider;
@@ -29,6 +28,60 @@ import lamar.database.nutrient.ProviderFactory;
 public class DatabaseTest 
 {
     private static final String DB_LOC = "target/nutritionGen.db";
+    private static final NutrientProvider RED = new ProviderFactory() 
+          .setName("red")    
+          .setUnit("gram")
+          .setType(Catagory.INGREDIENT)
+          .setPerUnit(100)
+          .setNutrient(Nutrient.ENERGY, 100)
+          .build();
+
+    private static final NutrientProvider BLUE = new ProviderFactory()
+          .setName("blue")    
+          .setUnit("gram")
+          .setType(Catagory.INGREDIENT)
+          .setPerUnit(100)
+          .setNutrient(Nutrient.SUGAR, 100)
+          .build(); 
+
+    private static final NutrientProvider YELLOW = new ProviderFactory()
+          .setName("yellow")    
+          .setUnit("gram")
+          .setType(Catagory.INGREDIENT)
+          .setPerUnit(100)
+          .setNutrient(Nutrient.FIBER, 100)
+          .build(); 
+
+    private static final NutrientProvider GREEN = new ProviderFactory()
+          .setName("green")    
+          .setUnit("gram")
+          .setType(Catagory.RECIPE)
+          .setPerUnit(100)
+          .addConstituent(BLUE, 1)
+          .addConstituent(YELLOW, 1)
+          .buildCompositeTable()
+          .build(); 
+
+    private static final NutrientProvider PURPLE = new ProviderFactory()
+          .setName("purple")    
+          .setUnit("gram")
+          .setType(Catagory.RECIPE)
+          .setPerUnit(100)
+          .addConstituent(BLUE, 1)
+          .addConstituent(RED, 1)
+          .buildCompositeTable()
+          .build(); 
+
+    private static final NutrientProvider BROWN = new ProviderFactory()
+          .setName("brown")    
+          .setUnit("gram")
+          .setType(Catagory.MEAL)
+          .setPerUnit(100)
+          .addConstituent(PURPLE, 1)
+          .addConstituent(GREEN, 2)
+          .buildCompositeTable()
+          .build(); 
+
 
     @BeforeClass
     public static void removeTestDb() throws IOException {
@@ -48,67 +101,13 @@ public class DatabaseTest
     public void bAddContains() throws SQLException, JsonProcessingException {
       Database db = Database.getInstance(DB_LOC);
 
-      ProviderFactory fctry = new ProviderFactory(); 
-      NutrientProvider red = fctry.setName("red")    
-          .setUnit("gram")
-          .setType(Catagory.INGREDIENT)
-          .setPerUnit(100)
-          .setNutrient(Nutrient.ENERGY, 100)
-          .build();
-
-      fctry = new ProviderFactory();
-      NutrientProvider blue = fctry.setName("blue")    
-          .setUnit("gram")
-          .setType(Catagory.INGREDIENT)
-          .setPerUnit(100)
-          .setNutrient(Nutrient.SUGAR, 100)
-          .build(); 
-
-      fctry = new ProviderFactory();
-      NutrientProvider yellow = fctry.setName("yellow")    
-          .setUnit("gram")
-          .setType(Catagory.INGREDIENT)
-          .setPerUnit(100)
-          .setNutrient(Nutrient.FIBER, 100)
-          .build(); 
-
-      fctry = new ProviderFactory();
-      NutrientProvider purple = fctry.setName("purple")    
-          .setUnit("gram")
-          .setType(Catagory.RECIPE)
-          .setPerUnit(100)
-          .addConstituent(blue, 1)
-          .addConstituent(red, 1)
-          .buildCompositeTable()
-          .build(); 
-
-      fctry = new ProviderFactory();
-      NutrientProvider green = fctry.setName("green")    
-          .setUnit("gram")
-          .setType(Catagory.RECIPE)
-          .setPerUnit(100)
-          .addConstituent(blue, 1)
-          .addConstituent(yellow, 1)
-          .buildCompositeTable()
-          .build(); 
-
-      fctry = new ProviderFactory();
-      NutrientProvider brown = fctry.setName("brown")    
-          .setUnit("gram")
-          .setType(Catagory.MEAL)
-          .setPerUnit(100)
-          .addConstituent(purple, 1)
-          .addConstituent(green, 2)
-          .buildCompositeTable()
-          .build(); 
-
-      db.addAll(red, blue, yellow, purple, green, brown);
+      db.addAll(RED, BLUE, YELLOW, PURPLE, GREEN, BROWN);
       String err = "error adding ";
-      assertTrue(err + "ingredient", db.contains(red));
-      assertTrue(err + "ingredient", db.contains(blue));
-      assertTrue(err + "recipe", db.contains(purple));
-      assertTrue(err + "recipe", db.contains(green));
-      assertTrue(err + "meal", db.contains(brown));
+      assertTrue(err + "ingredient", db.contains(RED));
+      assertTrue(err + "ingredient", db.contains(BLUE));
+      assertTrue(err + "recipe", db.contains(PURPLE));
+      assertTrue(err + "recipe", db.contains(GREEN));
+      assertTrue(err + "meal", db.contains(BROWN));
       db.close();
     }
 
@@ -118,11 +117,28 @@ public class DatabaseTest
       db.remove(Catagory.INGREDIENT, "yellow"); 
       
       String err = "error removing dependent "; 
-      assertTrue(err + "meal", !db.contains(Catagory.MEAL, "brown"));
-      assertTrue(err + "recipe", !db.contains(Catagory.RECIPE, "green"));
-      assertTrue(err + "ingredient", !db.contains(Catagory.INGREDIENT, "yellow"));
-      assertTrue(err + "recipe", db.contains(Catagory.RECIPE, "purple"));
-      assertTrue(err + "ingredient", db.contains(Catagory.INGREDIENT, "blue"));
+      assertTrue(err + "meal", !db.contains(BROWN.getType(), BROWN.getName()));
+      assertTrue(err + "recipe", !db.contains(GREEN.getType(), GREEN.getName()));
+      assertTrue(err + "ingredient", !db.contains(YELLOW.getType(), YELLOW.getName()));
+      assertTrue(err + "recipe", db.contains(PURPLE.getType(), PURPLE.getName()));
+      assertTrue(err + "ingredient", db.contains(BLUE.getType(), BLUE.getName()));
+
+      db.close();
+    }
+
+    @Test
+    public void dGet() throws SQLException, IOException {
+      Database db = Database.getInstance(DB_LOC);
+
+      NutrientProvider red = db.get(RED.getType(), RED.getName());
+      NutrientProvider blue = db.get(BLUE.getType(), BLUE.getName());
+      NutrientProvider purple = db.get(PURPLE.getType(), PURPLE.getName());
+
+      String err = "db GET error";
+
+      assertTrue(err + "on RECIPE", PURPLE.equals(purple));
+      assertTrue(err + "on INGREDIENT", red.equals(red));
+      assertTrue(err + "on INGREDIENT", blue.equals(blue));
     }
 
 }
