@@ -1,0 +1,11 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+nutritionGen,lamar.app,App,914,0,106,0,220,0,91,0,30,0
+nutritionGen,lamar.scraper,UsdaScraper,316,0,31,0,76,0,29,0,11,0
+nutritionGen,lamar.database,Database.Column,24,0,0,0,1,0,1,0,1,0
+nutritionGen,lamar.database,Database,50,419,5,25,8,76,6,28,2,17
+nutritionGen,lamar.database,ValueSet,4,27,2,4,1,6,2,4,0,3
+nutritionGen,lamar.database,Pair,20,37,3,3,2,9,4,4,1,4
+nutritionGen,lamar.database.nutrient,Nutrient,0,87,0,0,0,6,0,2,0,2
+nutritionGen,lamar.database.nutrient,NutrientProvider,144,123,13,11,25,27,13,11,3,9
+nutritionGen,lamar.database.nutrient,ProviderFactory,185,179,22,12,36,33,26,12,12,9
+nutritionGen,lamar.database.nutrient,Catagory,0,45,0,0,0,5,0,2,0,2

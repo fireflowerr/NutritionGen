@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Pair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nutritionGen</a> &gt; <a href="index.source.html" class="el_package">lamar.database</a> &gt; <span class="el_source">Pair.java</span></div><h1>Pair.java</h1><pre class="source lang-java linenums">package lamar.database;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonAutoDetect(
+    fieldVisibility = JsonAutoDetect.Visibility.ANY,
+    getterVisibility = JsonAutoDetect.Visibility.ANY
+)
+public class Pair &lt;T1, T2&gt; {
+ private final T1 value0; 
+ private final T2 value1;
+
+  @JsonCreator
+<span class="fc" id="L16">  public Pair(@JsonProperty(&quot;value0&quot;) T1 value0, @JsonProperty(&quot;value1&quot;) T2 value1) {</span>
+<span class="fc" id="L17">    this.value0 = value0;</span>
+<span class="fc" id="L18">    this.value1 = value1;</span>
+<span class="fc" id="L19">  }</span>
+
+  public T1 getValue0() {
+<span class="fc" id="L22">    return value0;</span>
+  }
+
+  public T2 getValue1() {
+<span class="fc" id="L26">    return value1;</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc" id="L31">    return &quot;(&quot; + value0 + &quot;, &quot; + value1 + &quot;)&quot;;</span>
+  }
+
+  @Override
+  public boolean equals(Object o) {
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">    if(!(o.getClass() == Pair.class)) {</span>
+<span class="nc" id="L37">      return false;</span>
+    }
+
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="fc" id="L41">    Pair remote = (Pair)o;</span>
+
+<span class="pc bpc" id="L43" title="2 of 4 branches missed.">    return value0.equals(remote.getValue0()) &amp;&amp; value1.equals(remote.getValue1()); </span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
