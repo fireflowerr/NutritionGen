@@ -45,12 +45,20 @@ public String getDbLoc() {
 	return dbLoc;
 }
 
-public static Database getInstance(String dbLoc) throws SQLException {
+  /**
+   * @param dbLoc The path to the DB
+   * @return      DB instance
+   */
+  public static Database getInstance(String dbLoc) throws SQLException {
     Connection conn = DriverManager.getConnection(PREFACE + dbLoc);
     Statement stmt = conn.createStatement();
     return new Database(dbLoc, conn, stmt); 
   }
 
+  /**
+   * @param dbLoc The path to the DB
+   * @return      A concreate instance of this DB
+   */
   public static Database createIfAbsent(String dbLoc) throws SQLException {
     Database db = getInstance(dbLoc);
     String create = "CREATE TABLE IF NOT EXISTS main ( type INTEGER NOT NULL, "
@@ -59,6 +67,9 @@ public static Database getInstance(String dbLoc) throws SQLException {
     return db;
   }
 
+  /**
+   * @param prov  The NutrientProvider to add to DB 
+   */
   public void add(NutrientProvider prov) throws SQLException, JsonProcessingException {
       String add = "INSERT INTO main ( type, name, value ) VALUES (\n" +
          "'" + prov.getType().p + "'" + ",\n" +
@@ -67,12 +78,20 @@ public static Database getInstance(String dbLoc) throws SQLException {
       stmt.execute(add);
   }
 
+  /**
+   *  @param  provs NutrientProviders to add to DB
+   */
   public void addAll(NutrientProvider... provs) throws SQLException, JsonProcessingException {
     for(NutrientProvider ntr : provs) {
       add(ntr);
     }
   }
 
+  /**
+   * Removes a specified NutrientProvider from this DB.
+   *  @param  type  The type of the NutrientProvider 
+   *  @param  name  The name of the NutrientProvider
+   */
   public void remove(Catagory type, String name) throws SQLException, IOException {
       for(NutrientProvider prov : getDependents(type, name)) {
         remove(prov);
@@ -83,10 +102,19 @@ public static Database getInstance(String dbLoc) throws SQLException {
       stmt.execute(remove);
   }
 
+  /**
+   * @param prov to remove
+   */
   public void remove(NutrientProvider prov) throws SQLException, IOException {
     remove(prov.getType(), prov.getName());
   }
 
+  /**
+   * Returns a list of dependent NutrientProviders
+   * @param type  The type of the NutrientProvider
+   * @param name  The name of the NutrientProvider
+   * @return The set of NutrientProviders that depend on the specified NutrientProvider
+   */
   public ValueSet<NutrientProvider> getDependents(Catagory type, String name) throws IOException, SQLException {
     ValueSet<NutrientProvider> canidates = new ValueSet<>();
     Catagory[] types = Catagory.values();
@@ -123,7 +151,7 @@ public static Database getInstance(String dbLoc) throws SQLException {
     return oldDependents;
   }
 
-  public boolean isDependent(Catagory type, String name, NutrientProvider prov) {
+  private boolean isDependent(Catagory type, String name, NutrientProvider prov) {
     HashMap<String, Pair<Catagory, Double>> constituent = prov.getConstituent();
 
     for(String ingr : constituent.keySet()) {
@@ -136,10 +164,16 @@ public static Database getInstance(String dbLoc) throws SQLException {
     return false;
   }
 
+  /**
+   * @return true if the provided NutrientProvider is contained in this DB
+   */
   public boolean contains(NutrientProvider prov) throws SQLException {
     return contains(prov.getType(), prov.getName());
   }
 
+  /**
+   * @return true if the provided NutrientProvider is contained in this DB
+   */
   public boolean contains(Catagory type, String name) throws SQLException {
     String exists = "SELECT DISTINCT type, name FROM main WHERE type = " + 
          type.p + " AND name = '" + name + "';";
@@ -148,6 +182,11 @@ public static Database getInstance(String dbLoc) throws SQLException {
     return rs.isClosed() ? false : true;
   }
 
+  /**
+   * @param type  The type of the NutrientProvider
+   * @param name  The name of the NutrientProvider
+   * @return  NutrientProvider matching the input criteria
+   */
   public NutrientProvider get(Catagory type, String name) throws SQLException, JsonMappingException, JsonProcessingException, IOException {
     String exists = "SELECT type, name, value FROM main WHERE type = " + 
         type.p + " AND name = '" + name + "';";
@@ -163,6 +202,11 @@ public static Database getInstance(String dbLoc) throws SQLException {
     return prov;
   }
 
+  /**
+   *  Fetch DB column by ID
+   *  @param id Column id
+   *  @return String list of column entries
+   */
   public List<String> getColumn(String id) throws SQLException {
     String get = "SELECT " + id + " FROM main";
     ResultSet rs = stmt.executeQuery(get);
@@ -174,6 +218,11 @@ public static Database getInstance(String dbLoc) throws SQLException {
     return toRet;
   }
 
+  /**
+   * Get all NutrientProviders of a certain Catagory
+   * @param type  The category for lookup
+   * @return      List of matching NutrientProvider    
+   */
   public List<NutrientProvider> getType(Catagory type) throws SQLException, IOException {
     String get = "SELECT value FROM main WHERE type = " + type.p;
     ResultSet rs = stmt.executeQuery(get);
@@ -185,6 +234,9 @@ public static Database getInstance(String dbLoc) throws SQLException {
     return ntr;
   }
 
+  /**
+   * Close access to this DB resource
+   */
   @Override
   public void close() throws SQLException {
     conn.close();
