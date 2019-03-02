@@ -8,10 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -25,8 +23,6 @@ import lamar.database.nutrient.NutrientProvider;
 
 
 public class Database implements AutoCloseable {
-
-  public static enum Column { TYPE, NAME };
 
   private static final String PREFACE = "jdbc:sqlite:";
  
@@ -141,11 +137,7 @@ public static Database getInstance(String dbLoc) throws SQLException {
   }
 
   public boolean contains(NutrientProvider prov) throws SQLException {
-    String exists = "SELECT DISTINCT type, name FROM main  WHERE type = " + 
-          prov.getType().p + " AND name = '" + prov.getName() + "';";
-
-    ResultSet rs = stmt.executeQuery(exists);
-    return rs.isClosed() ? false : true;
+    return contains(prov.getType(), prov.getName());
   }
 
   public boolean contains(Catagory type, String name) throws SQLException {
@@ -163,7 +155,7 @@ public static Database getInstance(String dbLoc) throws SQLException {
     ResultSet rs = stmt.executeQuery(exists);
 
     if(rs.isClosed()) {
-      throw new NoSuchElementException("no such entry: " + name);
+      throw new SQLException("no such entry: " + name);
     }
 
     NutrientProvider prov = (NutrientProvider)mapper.readValue((String)rs.getObject("value"), NutrientProvider.class);

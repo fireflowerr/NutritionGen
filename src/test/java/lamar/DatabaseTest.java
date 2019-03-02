@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -79,6 +80,7 @@ public class DatabaseTest
           .setPerUnit(100)
           .addConstituent(PURPLE, 1)
           .addConstituent(GREEN, 2)
+          .addConstituent(YELLOW, .03)
           .buildCompositeTable()
           .build(); 
 
@@ -117,11 +119,11 @@ public class DatabaseTest
       db.remove(Catagory.INGREDIENT, "yellow"); 
       
       String err = "error removing dependent "; 
-      assertTrue(err + "meal", !db.contains(BROWN.getType(), BROWN.getName()));
-      assertTrue(err + "recipe", !db.contains(GREEN.getType(), GREEN.getName()));
-      assertTrue(err + "ingredient", !db.contains(YELLOW.getType(), YELLOW.getName()));
-      assertTrue(err + "recipe", db.contains(PURPLE.getType(), PURPLE.getName()));
-      assertTrue(err + "ingredient", db.contains(BLUE.getType(), BLUE.getName()));
+      assertTrue(err + "meal", !db.contains(BROWN));
+      assertTrue(err + "recipe", !db.contains(GREEN));
+      assertTrue(err + "ingredient", !db.contains(YELLOW));
+      assertTrue(err + "recipe", db.contains(PURPLE));
+      assertTrue(err + "ingredient", db.contains(BLUE));
 
       db.close();
     }
@@ -139,6 +141,35 @@ public class DatabaseTest
       assertTrue(err + "on RECIPE", PURPLE.equals(purple));
       assertTrue(err + "on INGREDIENT", red.equals(red));
       assertTrue(err + "on INGREDIENT", blue.equals(blue));
+      
+      boolean thrown = false;
+      try {
+        db.get(RED.getType(), PURPLE.getName());
+      } catch(SQLException e) {
+        thrown = true;
+      }
+
+      assertTrue("Failed to throw exception on invalid GET operation", thrown);
+      db.close();
+    }
+
+    @Test
+    public void eGetCol() throws SQLException {
+      Database db = Database.getInstance(DB_LOC);
+      List<String> dbNames = db.getColumn("name");
+
+      String err = "Error constructing name column from DB";
+      assertTrue(err, dbNames.remove(PURPLE.getName()));
+      assertTrue(err, dbNames.remove(BLUE.getName()));
+      assertTrue(err, dbNames.remove(RED.getName()));
+      assertTrue(err, dbNames.isEmpty());
+      db.close();
+    }
+
+    @Test
+    public void fGetDbLoc() throws SQLException {
+      Database db = Database.getInstance(DB_LOC);
+      assertTrue("error in db field or getter dbLoc", DB_LOC.equals(db.getDbLoc()));
     }
 
 }
