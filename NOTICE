@@ -1,0 +1,10 @@
+This project includes:
+  Jackson-annotations under The Apache Software License, Version 2.0
+  Jackson-core under The Apache Software License, Version 2.0
+  jackson-databind under The Apache Software License, Version 2.0
+  JaCoCo :: Agent under Eclipse Public License v1.0
+  JaCoCo :: Core under Eclipse Public License v1.0
+  JaCoCo :: Maven Plugin under Eclipse Public License v1.0
+  JaCoCo :: Report under Eclipse Public License v1.0
+  SQLite JDBC under The Apache Software License, Version 2.0
+
